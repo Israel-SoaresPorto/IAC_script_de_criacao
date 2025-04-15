@@ -8,22 +8,27 @@ while
   echo "1 - GRP_ADM"
   echo "2 - GRP_VEN"
   echo "3 - GRP_SEC"
+  echo "4 - Convidado"
   read -p "> " grp_option
 
   case $grp_option in
-    1) 
+    1)
 	grp="GRP_ADM" 
 	break
 	;;
-    2) 
+    2)
 	grp="GRP_VEN" 
 	break
 	;;
-    3) 
+    3)
 	grp="GRP_SEC" 
 	break
 	;;
-    *) 
+    4)
+	grp="convidado"
+	break
+	;;
+    *)
 	echo -e "\nDigite o grupo correspondente\n"
 	;;
   esac
@@ -48,7 +53,12 @@ do true; done
 
 printf "\n"
 
-sudo useradd $name -m -s /bin/bash -p $(openssl passwd -6 "$password") -G $grp
+if [ "$grp" = "convidado" ]; then
+	sudo useradd $name -c "Usuario convidado" -s /bin/bash -m -p $(openssl passwd -6 "$password")
+	sudo passwd $name -e 
+else
+	sudo useradd $name -m -s /bin/bash -p $(openssl passwd -6 "$password") -G $grp
+fi
 
 echo -e "Usuário criado com sucesso."
 echo "Fim...."
